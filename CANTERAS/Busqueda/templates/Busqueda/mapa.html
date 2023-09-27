@@ -1,0 +1,97 @@
+{% extends "ProyectoWebApp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<head>
+    <!--BOOTSTRAP--> 
+    <link rel="stylesheet" href="{% static '/ProyectoWebApp1/vendor/bootstrap/css/bootstrap.min.css' %}"/>
+    <!--css/busqueda/style-->
+    <link rel="stylesheet" href="{% static '/ProyectoWebApp1/css/busqueda/busqueda.css' %}"/>
+</head>
+<body>
+    <!--Este es el contenedor principal para ubicar los elementos-->
+    <div class="container">
+        <!--formulario de busqueda para el mapa-->
+        <div class="row">
+            <form method="post" action="{% url 'buscar_municipio' %}">
+                {% csrf_token %}
+                <label for="municipio" style="color: white;">Municipio</label>
+                <input class="form-control form-control-lg my-input" type="text" placeholder="Municipio" aria-label=".form-control-lg example" name="municipio" id="municipio">
+                <label for="latitud" style="color: white;">Latitud</label>
+                <input class="form-control my-input" type="text" placeholder="Latitud" aria-label="default input example" name="latitud" id="latitud">
+                <label for="longitud" style="color: white;">Longitud</label>
+                <input class="form-control form-control-sm my-input" type="text" placeholder="Longitud" aria-label=".form-control-sm example" name="longitud" id="longitud">
+                
+                <label for="zona" style="color: white;">Control de Busqueda</label> 
+                <!--Selector de Zonas-->
+                <select class="form-control" name="zona" id="zona">
+                    <option value="Norte" data-zona="{{norte}}">Norte</option>
+                    <option value="Sur" data-zona="{{sur}}">Sur</option>
+                    <option value="Centro" data-zona="{{centro}}">Centro</option>
+                    <option value="Oriente" data-zona="{{oriente}}">Oriente</option>
+                    <option value="Cantera">Fuente de extracción:Cantera</option>
+                    <option value="Rio">Fuente de extracción:Rio</option>
+                    <option value="Acopio">Fuente de extracción:Acopio</option>
+                    <option value="CDT">Fuentes capturadas por el CDT Vial de la Universidad del Cauca</option>
+                    <option value="Base">Base de datos Inicial de fuentes de extracción en el Cauca</option>
+                </select>
+                <!--Botón de selector-->
+                <input type="submit" value="Buscar/recargar" class="btn btn-info filter-btn" style="margin-top: 10;"/>
+            </form>
+        </div>
+        <!--Fila del mapa-->
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <div class="card mt-3"> <!-- Crea un contenedor de una tarjeta (card) y le agrega una margen superior (mt-3) de tamaño mediano. La clase "card" de Bootstrap proporciona una apariencia estilizada y se utiliza para contener otros elementos dentro de ella, como encabezados, imágenes, listas y tablas.-->
+                    <div class="card-header">Mapa con Fuentes de Extracción</div> <!--Crea un encabezado (header) para la tarjeta con el texto "Busqueda" dentro del mismo. La clase "card-header" de Bootstrap se utiliza para dar estilo al encabezado de la tarjeta-->
+                    <div class="card-body">
+                        <div id="map"></div>
+                        <div id="map-mun"></div>
+                            {{map|safe}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Fila de municipios para buscar-->
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <label style="color: white;" aria-atomic="true">Municipios de la base de datos para Buscar</label>
+                <!--********************************************************************-->
+                <!--Este selector es para buscar solo la lista de municipios-->
+                <select class="form-control" name="municipioslista" id="municipioslista">
+                    {% for municipio in municipioslista %}
+                    <option value="{{municipio}}">{{municipio}}</option>
+                    {% endfor %} 
+                </select>
+                <!--********************************************************************-->
+            </div>
+        </div>
+    </div>
+    <!--/*********************************************************************************-->
+    <!--Función que permite filtrar los municipios dependiendo de la zona-->
+    <!-- <script>
+        function actualizarMunicipios(){
+            //Obtener la zona seleccionada
+            const zonaSeleccionada=document.querySelector('#zona').value;
+            //Obtener los municipios de la zona seleccionada desde el atributo data
+            const municipios = JSON.parse(document.querySelector(`option[value="${zonaSeleccionada}"]`).getAttribute('data-zona'));
+            //Actualizar la lista de municipios excluidos en la lista
+            const municipiosExcluidos=document.querySelector('#municipios');
+            municipiosExcluidos.innerHTML='';
+            for (const municipio of municipios){
+                const opcion= document.createElement('option');
+                opcion.value=municipio;
+                opcion.text=municipio;
+                municipiosExcluidos.appendChild(opcion);
+            }
+        }
+        document.querySelector('#zona').addEventListener('change', actualizarMunicipios);
+    </script> -->
+    <!--/*********************************************************************************-->
+    <script src="{% static '/ProyectoWebApp1/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/ProyectoWebApp1/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static '/ProyectoWebApp1/js/busqueda/scriptbusqueda.js' %}"></script>
+    
+</body>
+{% endblock %}

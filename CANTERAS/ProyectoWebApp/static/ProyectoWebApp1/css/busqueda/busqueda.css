@@ -1,0 +1,22 @@
+#mi-tabla th {
+    font-size: 14px; /* Tamaño de letra */
+    padding: 8px; /* Espacio interior de la celda */
+    text-align: center; /* Alineación del texto */
+ }
+ .my-input {
+    width: 100%;
+}
+/*-------------------------------------------*/
+/* Esta clase agrega un botón para agrandar el mapa*/
+/* .fullscreen-map {
+    position: fixed !important;
+    z-index: 9999 !important;
+  }
+  
+  .fullscreen-map-btn {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    z-index: 9999 !important;
+  } */
+/*-------------------------------------------*/

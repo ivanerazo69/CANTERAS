@@ -1,0 +1,101 @@
+/* centra los botones horizontalmente */
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* da un margen alrededor de los botones */
+.resumen-forma {
+  margin: 0 100px;
+}
+
+/* reduce el tamaño del texto en los botones */
+.titulo-forma, .titulo-resultado {
+  font-size: 14px;
+}
+/*titulos de gráficos*/
+.titulo_graph{
+  font-size: 100%;
+  padding: 30px .1em;
+}
+
+/*estilos del gráfico*/
+.graph{
+  width: 100%;
+  height: 72%;
+  text-align: center;
+  align-items: center;
+}
+/*------------------------------------------------------*/
+
+/* Estilos para la tabla de producción */
+.tabla-produccion {
+  background-color: green;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-produccion th,
+.tabla-produccion td {
+  padding: 8px;
+  text-align: left;
+}
+
+.tabla-produccion th {
+  background-color: #4CAF50;
+  color: white;
+}
+/*------------------------------------------------------*/
+/* Estilos para la tabla de ensayos */
+.tabla-ensayos {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+/*Scrol mantenga la columna 1 de la tabla "ensayos"*/
+.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: #fff;
+}
+
+/* Fijar las dos primeras columnas al mover el scroll horizontal 
+.tabla-ensayos th:nth-child(1),
+.tabla-ensayos td:nth-child(1),
+.tabla-ensayos th:nth-child(2),
+.tabla-ensayos td:nth-child(2) {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}*/
+
+.tabla-ensayos th,
+.tabla-ensayos td {
+  padding: 8px;
+  text-align: left;
+}
+
+.tabla-ensayos th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.table-container {
+  margin-bottom: 20px; /* Agrega espacio entre los contenedores de las tablas */
+}
+
+@media (max-width: 767.98px) {
+  .table-container {
+    width: 100%; /* Asegura que los contenedores se ajusten al ancho completo en dispositivos móviles */
+  }
+}
+/*---------------------------------------------*/
+/*Centrar gráfico circular de producciones*/
+#pastel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

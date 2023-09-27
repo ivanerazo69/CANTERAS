@@ -1,0 +1,40 @@
+{% extends "ProyectoWebApp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static '/ProyectoWebApp1/vendor/bootstrap/css/bootstrap.min.css' %}"/>
+</head>
+<body>
+    <!--Contenedor del gráfico de conteos-->
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">Gráfico de conteo de fuentes por municipio</div>
+            <div class="card-body">
+                {{plot_html|safe }}
+            </div>
+        </div>
+    </div>
+    <!--Contenedor del gráfico de Estudios realizados-->
+    <!-- <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">Gráfico de conteo de Estudios Realizados</div>
+            <div id="graph2">
+                {{ plot_html2|safe }}
+            </div>
+        </div>
+    </div> -->
+    <!--Contenedor del gráfico de CBR-->
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">CBR en Municipios</div>
+            <div id="graph3">
+                {{ plot_html3|safe }}
+            </div>
+        </div>
+    </div>
+    <script src="{% static '/ProyectoWebApp1/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/ProyectoWebApp1/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+{% endblock %}

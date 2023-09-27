@@ -1,0 +1,152 @@
+{% extends "ProyectoWebApp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<html>
+  <body>
+
+  <!-- Heading -->
+  <section class="page-section clearfix">
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static '/ProyectoWebApp1/img/prin.jpg' %}" alt="">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-upper">Optimización</span>
+            <span class="section-heading-lower">Canteras Web </span>
+          </h2>
+          <p class="mb-3"> Canteras Web es el segundo modelo de software para la gestión de Fuentes de Extracción. Su principal diferencia respecto a Canteras Movil es la de realizar el tratamiento de datos para desarrollar procesos de aprendizaje automatico y así lograr optener la fuente de extracción que cumpla con las caracteristicas de un proyecto determinado en vias terciarías en el Departamento del Cauca 
+          </p>
+        </div>
+      </div>
+    </div>
+    <section class="page-section clearfix"></section>
+    <div class="intro">
+      <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static '/ProyectoWebApp1/img/descripcion.png' %}" alt="">
+      <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+        <h2 class="section-heading mb-4" >
+          <span class="section-heading-upper">Procesos</span>
+          <span class="section-heading-lower">Canteras Web </span>
+        </h2>
+        <p class="mb-3"> Canteras Web realiza el procesamiento de datos y genera resultados a partir del entrenamiento de la base de datos previamente manipulada. Este software ha sido construido con un modelo de aprendizaje automatico, especificamente haciendo uso de redes neuronales y con esto lograr resultados más proximos a la realidad. Es importante mencionar que cómo todo software entrenado con algun modelo de aprendizaje automatico no está excento de posibles confusiones, sin embargo la idea de este proyecto es lograr una mejor respuesta ante cualquier circunstancia.  
+        </p>
+      </div>
+    </div>
+  </section>
+
+<!--Mensaje de advertencia-->
+<div id="warning-message" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 2px solid #ccc; z-index: 9999;">
+  <p>¡Bienvenido a nuestro sitio web!. Advertencia:
+    Los resultados obtenidos con la aplicación son
+    responsabilidad única del usuario encargado del trabajo, 
+    en ningún momento comprometen al creador del software ni
+    a las partes que han suministrado la información. 
+  </p>
+  <button id="accept-button">Aceptar</button>
+</div>
+<!--Script para mensaje de advertencia vigente 1 día-->
+<script>
+  // Función para mostrar el mensaje de advertencia si es necesario
+  function showWarning() {
+      var warningMessage = document.getElementById("warning-message");
+      if (getCookie("visited_home_count") === "" || parseInt(getCookie("visited_home_count")) % 10 === 0) {
+          warningMessage.style.display = "block";
+      }
+
+      // Configura el evento click para el botón de aceptar
+      var acceptButton = document.getElementById("accept-button");
+      acceptButton.addEventListener("click", function () {
+          warningMessage.style.display = "none";
+
+          // Incrementa el contador de visitas a la página de inicio
+          var count = parseInt(getCookie("visited_home_count")) || 0;
+          count += 1;
+          document.cookie = "visited_home_count=" + count;
+
+          // Establece la cookie "visited_home" con una fecha de vencimiento
+          var expirationDate = new Date();
+          expirationDate.setDate(expirationDate.getDate() + 1); // Cookie válida por 1 día
+          document.cookie = "visited_home=true; expires=" + expirationDate.toUTCString();
+      });
+  }
+
+  // Llama a la función para mostrar el mensaje de advertencia
+  showWarning();
+
+  // Función para obtener el valor de una cookie por nombre
+  function getCookie(name) {
+      var cookies = document.cookie.split("; ");
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].split("=");
+          if (cookie[0] === name) {
+              return cookie[1];
+          }
+      }
+      return "";
+  }
+</script>
+
+<!--Script comprueba con el evento clic-->
+<!-- <script>
+  // Función para mostrar el mensaje de advertencia si es necesario
+function showWarning() {
+    var warningMessage = document.getElementById("warning-message");
+    
+    // Configura el evento click para el botón de aceptar
+    var acceptButton = document.getElementById("accept-button");
+    acceptButton.addEventListener("click", function () {
+        // Incrementa el contador de visitas a la página de inicio
+        var count = parseInt(getCookie("visited_home_count")) || 0;
+        count += 1;
+        document.cookie = "visited_home_count=" + count;
+
+        // Verifica si el contador es un múltiplo de 10 para mostrar la advertencia
+        if (count % 10 === 0) {
+            warningMessage.style.display = "block";
+        } else {
+            warningMessage.style.display = "none";
+        }
+
+        // Establece la cookie "visited_home" con una fecha de vencimiento
+        var expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 1); // Cookie válida por 1 día
+        document.cookie = "visited_home=true; expires=" + expirationDate.toUTCString();
+    });
+}
+
+// Llama a la función para mostrar el mensaje de advertencia
+showWarning();
+
+</script> -->
+<!-- Message -->
+<section class="page-section cta">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-9 mx-auto">
+        <div class="cta-inner text-center rounded">
+          <h2 class="section-heading mb-4">
+            <span class="section-heading-upper">Artificial Intelligence in Civil Engineering</span>
+            <span class="section-heading-upper">Por: Ivan Felipe Erazo Ceron</span>
+            <span class="section-heading-lower">Canteras Web</span>
+          </h2>
+          <p class="mb-0">
+            Canteras web esta construido con modelos de aprendizaje automatico con la finalidad obtener 
+            información acerca de las fuentes de extracción de materiales y logre seleccionar la adecuada según sus necesidades. 
+            El procesamiento se realizo con fuentes en las zonas de: Norte, Sur, Oriente y Centro del Departamento del Cauca. 
+            Las fuentes de extracción es el resultado de la base de datos que ha recolectado la oficina de infraestructura de la 
+            gobernación del Cauca y a través del Centro de Desarrollo Tecnológico para la Innovación de la Infraestructura Víal de la Universidad del Cauca se ha logrado capturar la información para su realización. 
+            **Nota: Este software ha sido desarrollado como ejercicio académico. Los resultados obtenidos con la aplicación son
+            responsabilidad única del usuario encargado del trabajo, 
+            en ningún momento comprometen al creador del software ni
+            a las partes que han suministrado la informaciós.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </body>
+</html>
+{% endblock %}

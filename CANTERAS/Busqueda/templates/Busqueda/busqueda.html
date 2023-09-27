@@ -1,0 +1,133 @@
+{% extends "ProyectoWebApp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<head>
+    <!--Bootstrap-->  
+    <link rel="stylesheet" href="{% static '/ProyectoWebApp1/vendor/bootstrap/css/bootstrap.min.css' %}"/>
+    <!--css/busqueda/style-->
+    <link rel="stylesheet" href="{% static '/ProyectoWebApp1/css/busqueda/busqueda.css' %}"/>
+</head>
+<body>
+    <!------------------------------------------------------------------------->
+    <!--Sección para proporcionar enlaces-->
+    <nav class="navbar navbar-expand-lg bg-dark">
+        <!--Contenedor para los links-->
+        <div class="container-fluid">
+          <!--Opción para el link del mapa-->
+          <a class="navbar-brand" href="{% url 'mapa' %}">Mapa con Fuentes de Extracción</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!--Contenedor secundario-->
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!--Opción para el link de gráficos y el software Canteras-móvil-->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'graficos' %}">Gráficos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://www.appsheet.com/start/2a9dfdb2-bb65-4d2b-8cc9-d7a780ba16e0#_currentLat=2.270189701367937&_currentLng=-76.57007860000002&_mapType=hybrid&_zoom=8&appName=NewApp-6272824&table=Hoja1&view=Mapa+de+puntos+Canteras+%28previous+database%29">Canteras Movil</a>
+              </li>
+              <li class="nav-item dropdown">
+                <!--<a class="nav-link dropdown-toggle" href="{% url 'mapa' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Opciones
+                </a>-->
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'mapa' %}">Action</a></li>
+                  <li><a class="dropdown-item" href="{% url 'graficos' %}">Another action</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" style="color: white;">Buscador</a>
+              </li>
+            </ul>
+            <!--En el atributo "{% url 'Busqueda_Fuente' %}" indica la url donde se enviarán los datos para la consulta a través del método GET-->
+            <form class="d-flex" role="search" method="GET" action="{% url 'Busqueda_Fuente' %}">
+              <select class="form-select" name="tipo_busqueda">
+                <option value="municipio">Buscar por municipio</option>
+                <option value="tipo_extraccion">Buscar por tipo de extracción</option>
+                <option value="zona">Buscar por Zona</option>
+                <option value="nombre_fuente">Nombre de la Fuente</option>
+              </select>
+              <input class="form-control me-2" type="text" placeholder="Ingrese término de búsqueda" aria-label="Search" name="q">
+              <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+          </div>
+        </div>
+    </nav>
+    <!------------------------------------------------------------------------->
+    <!--Este es el contenedor principal para ubicar los elementos-->
+    <div class="container">
+        <!--Interfaz principal: Tabla y gráfica CBR-->
+        <div class="row">
+            <!--Lo que nos dice es que para las pantallas medium deseo un espacio de 4, además cada que creamos un col-md-"tamaño" tendremos una nueva columna-->
+            <!--<div class="col-sm-12 col-md-4 col-lg-4 col-xl-4"></div>-->
+                <!--Aquie ira el menu lateral-->
+
+            <!--Tabla de las fuentes de extracción-->
+            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                <h4 style="color: white;">Fuentes de Extracción en el Departamento del Cauca</h4>
+                <div class="table-container" style="width: 700px; height:500px; overflow: auto;">
+                  <table id="mi-tabla" class="table table-dark table-striped" >
+                      <thead>
+                          <tr>
+                              <th>Tipo de Extracción</th>
+                              <th>Nombre de la Fuente</th>
+                              <th>Observación de la Fuente</th>
+                              <th>Otras Observaciones</th>
+                              <th>Fecha de Registro de la Fuente</th>
+                              <th>Zona</th>
+                              <th>Municipio</th>
+                              <th>Vereda</th>
+                              <th>Coordenada Latitud</th>
+                              <th>Coordenada Longitud</th>
+                              <th>Imagen de la Fuente</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for busqueda in busquedas %}
+                          <!--Fila-->
+                          <tr>
+                              <!--Celda-->
+                              <td>{{ busqueda.tipoextraccion }}</td>
+                              <td>{{ busqueda.nombre_fuente }}</td>
+                              <td>{{ busqueda.observacion_fuente }}</td>
+                              <td>{{ busqueda.otras_observaciones }}</td>
+                              <td>{{ busqueda.fecha }}</td>
+                              <td>{{ busqueda.zona }}</td>
+                              <td>{{ busqueda.municipio }}</td>
+                              <td>{{ busqueda.vereda }}</td>
+                              <td>{{ busqueda.coordenada_Latitud }}</td>
+                              <td>{{ busqueda.coordenada_Longitud }}</td>
+                              <td>{% if busqueda.imagen %}
+                                  <img src="{{busqueda.imagen.url}}" alt="{{busqueda.nombre_fuente}}" width="200px"/>
+                                  {% else %}
+                                  <p>No hay registro de imagenes</p>
+                                  {% endif %}
+                              </td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+                </div>
+            </div>
+            <!--Pantalla del gráfico CBR-->
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+              <div class="container mt-3">
+                <div class="card">
+                    <div class="card-header">CBR</div>
+                    <div id="myplot">
+                        {{ plot_html4|safe }}
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static '/ProyectoWebApp1/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/ProyectoWebApp1/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+{% endblock %}

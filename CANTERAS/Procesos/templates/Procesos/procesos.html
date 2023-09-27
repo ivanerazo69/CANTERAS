@@ -1,0 +1,251 @@
+{% extends "ProyectoWebApp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<head>
+    <!--Css Personalizado-->
+    <link href="{% static '/ProyectoWebApp1/css/procesos/procesos.css' %}" rel="stylesheet">
+    <!--Bootstrap-->  
+    <link rel="stylesheet" href="{% static '/ProyectoWebApp1/vendor/bootstrap/css/bootstrap.min.css' %}"/>
+
+    <!-- jQuery-->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="container mb-3">
+        <!--Formulario contenedor para la red neuronal-->
+        <form method="post" action="{% url 'predecir_fuentes' %}">
+            {% csrf_token %}
+            <!--Fila 1 Selector-->
+            <div class="row justify-content-center">
+                <!--Name del proyecto-->
+                <input class="form-control form-control-lg" type="text" placeholder="Nombre del proyecto" aria-label=".form-control-lg example" style="margin-bottom: 15; margin-top: 10;">
+                <!--Lista de Zonas-->
+                <label for="zona" class="form-label"></label>
+                <!--Selector para Zonas--> <!--El atributo value:define el valor asociado a la opción. Cuando el usuario selecciona esta opción, el valor "Norte" se enviará al servidor como parte de los datos del formulario-->
+                <select class="form-control" id="zona">
+                    <option value="Norte" data-zona="{{norte}}">Norte</option>
+                    <option value="Sur" data-zona="{{sur}}">Sur</option>
+                    <option value="Centro" data-zona="{{centro}}">Centro</option>
+                    <option value="Oriente" data-zona="{{oriente}}">Oriente</option>
+                </select>
+            </div>
+            <!--Fila 2 filtro y contenedor-->
+            <div class="row" style="margin-top: 15;">
+                <!--Selector de municipios incluidos-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <label for="municipio" style="color: white;">Selecciona los municipios para incluir en el modelo</label>
+                    <select multiple class="form-control" id="municipio">
+                    </select>
+                    <button type="button" style="margin-top: 10;" class="btn btn-primary" onclick="enviarSeleccion()">Enviar</button>
+                </div>
+                <!--contenedor de los municipios excluidos-->
+                <div class="fcol-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <label for="cuadro-texto" style="color: white;">Municipios seleccionados para descriminar el modelo</label>
+                    <textarea class="form-control" id="cuadro-texto" rows="3" readonly></textarea>   
+                </div>
+            </div>
+            <!--Formulario-->
+            <div class="row mt-3">
+                <!--CBR-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" name="cbr" placeholder="CBR" step="0.01" min="0" max="1000">
+                        <label for="cbr" class="text-white">CBR</label>
+                    </div>
+                </div>
+                <!--IP-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" name="ip" placeholder="IP" step="0.01" min="0" max="100">
+                        <label for="ip" class="text-white">IP</label>
+                    </div>
+                </div>
+                <!--LL-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" name="ll" placeholder="LL" step="0.01" min="0" max="100">
+                        <label for="ll" class="text-white">LL</label>
+                    </div>
+                </div>
+                <!--DMA-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" name="maquina" placeholder="Desgaste en la Maquina de los Angeles" step="0.01" min="0" max="1000">
+                        <label for="maquina" class="text-white">Desgaste en la maquina de los Angeles</label>
+                    </div>
+                </div>
+                <!--resultado P200/P10-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" name="r1" placeholder="Relacion P200/P10" step="0.01" min="0" max="100">
+                        <label for="r1" class="text-white">Relación entre el Pasa 200 y Pasa 10:B</label>
+                    </div>
+                </div>
+                <!--resultado P200/P40-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" name="r2" placeholder="Relacion P200/P40" step="0.01" min="0" max="100">
+                        <label for="r2" class="text-white">Relación entre el Pasa 200 y Pasa 40:C</label>
+                    </div>
+                </div>
+                <!--Pasa 1 pulgada-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" id="r3" placeholder="%Pasa tamiz 1 pulgada" step="0.01" min="0" max="100"/>
+                        <label for="r3" class="text-white">% Pasa tamiz de 1 pulgada</label>
+                    </div>
+                </div>
+                <!--Pasa Numero 10 -->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" id="r4" placeholder="%Pasa tamiz #10" step="0.01" min="0" max="100"/>
+                        <label for="r4" class="text-white">% Pasa tamiz Número 10</label>
+                    </div>
+                </div>
+                <!--Pasa Numero 4 -->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" id="r5" placeholder="%Pasa tamiz #4" step="0.01" min="0" max="100"/>
+                        <label for="r5" class="text-white">% Pasa tamiz Número 4</label>
+                    </div>
+                </div>
+                <!--resultado (A-B)*C-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div>
+                        <input type="number" class="form-control" id="resultado" readonly>
+                        <label for="resultado" class="text-white">{(%pasa tamiz 1 pulgada)-(%pasa tamiz #10)}x{%pasa tamiz #4}</label>
+                        <button type="button" style="margin-top: 10;" class="btn btn-primary" id="calcular">Resultado matemático</button>
+                    </div>
+                </div>
+            </div>
+            <!--Bóton de enviar formulario-->
+            <div class="row mt-3">
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <input type="submit" value="Enviar Formulario" class="btn btn-info filter-btn" style="margin-top: 10;">
+                </div>
+            </div>
+        </form>
+        <!--texarea para recuperar los datos de DJANGO-->
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <label for="cuadro-texto" style="color: white;">Resultado del tratamiento con Redes Neuronales</label>
+            <textarea class="form-control" id="cuadro-texto" rows="3" readonly>
+                Resultado de la predicción con los datos del formulario ("cumple los requisitos" o "no cumple los requisitos"): {{ etiqueta_prediccion }}
+            </textarea> 
+        </div>
+        <br>
+                                <!-- Verificar los valores de las fuentes cercanas -->
+        <!--Tabla1:Valores de ensayos de Fuentes cercanas-->
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <div class="table-container" style="overflow: auto;">
+                <div class="table-responsive rounded">
+                    <table class="table table-striped" class="table table-striped table-hover rounded" style="background-color: #D1E7DD">
+                        <thead>
+                           <tr>
+                                <th class="sticky-col">DUREZA</th>
+                                <th>IP</th>
+                                <th>CBR</th>
+                           </tr> 
+                        </thead>
+                        <tbody>
+                            {% for fuente in ensayos_fuentes_prediccion %}
+                            <tr>
+                                <td>{{ fuente.Dureza_maquina_angeles }}</td>
+                                <td>{{ fuente.IP }}</td>
+                                <td>{{ fuente.CBR }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--Tabla2:Nombre de Fuentes cercanas-->
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <div class="table-container" style="overflow: auto;">
+                <div class="table-responsive rounded">
+                    <table class="table table-striped" class="table table-striped table-hover rounded" style="background-color: #D1E7DD">
+                        <thead>
+                           <tr>
+                                <th class="sticky-col">Nombre de la Fuente</th>
+                           </tr> 
+                        </thead>
+                        <tbody>
+                            {% for nombre_fuente in nombres_fuentes_cercanas %}
+                            <tr>
+                                <td>{{ nombre_fuente }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            El valor de la probabilidad es:{{probabilidad}}
+        </div>
+            <!--Formato como arroja el modelo entrenado para verificar y luego procesar adecuadamente-->
+        <!--Valores de ensayos de las fuentes del modelo-->
+        <!--<div id="resultado_prediccion">Valores de la predicción: {{ ensayos_fuentes_prediccion }}</div>-->
+        <!--Nombre de la fuente del modelo, "si coje"--> 
+        <!--<ul>
+            {% for nombre_fuente in nombres_fuentes_cercanas %}
+            <li>Nombre de fuente cercana: {{ nombre_fuente }}</li>
+            {% endfor %}
+        </ul>-->
+    </div>
+    <!--Botón para enviar los municipios incluidos-->
+    <script>
+        function enviarSeleccion(){
+            var seleccionados =$('#municipio').val();
+            $('#cuadro-texto').val(seleccionados.join(','));
+            //enviar formulario con los elementos seleccionados
+        }
+    </script>
+    <!--Función que permite filtrar los municipios dependiendo de la zona-->
+    <script>
+        function actualizarMunicipios(){
+            //Obtener la zona seleccionada
+            const zonaSeleccionada=document.querySelector('#zona').value;
+            //Obtener los municipios de la zona seleccionada desde el atributo data
+            const municipios = JSON.parse(document.querySelector(`option[value="${zonaSeleccionada}"]`).getAttribute('data-zona'));
+            //Actualizar la lista de municipios excluidos en la lista
+            const municipiosExcluidos=document.querySelector('#municipio');
+            municipiosExcluidos.innerHTML='';
+            for (const municipio of municipios){
+                const opcion= document.createElement('option');
+                opcion.value=municipio;
+                opcion.text=municipio;
+                municipiosExcluidos.appendChild(opcion);
+            }
+        }
+        document.querySelector('#zona').addEventListener('change', actualizarMunicipios);
+    </script>
+    <!--Función para obtener una operación matematica utilizando datos de los inputs y mostrando el resultado en otro input-->
+    <script>
+        //obtener los elementos del DOM
+        const r3=document.getElementById('r3');
+        const r4=document.getElementById('r4');
+        const r5=document.getElementById('r5');
+        const resultado=document.getElementById('resultado')
+        //agregar un event listener al botón para realizar la operación
+        document.getElementById('calcular').addEventListener('click', function(){
+            //obtener los valores de los inputs
+            const valor1=parseFloat(r3.value);
+            const valor2=parseFloat(r4.value);
+            const valor3=parseFloat(r5.value);
+            //realizar la operación matemática
+            const resultadoOperacion = (valor1-valor2)*valor3
+            //actualizar el valor del input de resultado
+            resultado.value=resultadoOperacion;
+        });
+    </script>
+
+    <script src="{% static '/ProyectoWebApp1/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/ProyectoWebApp1/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+{% endblock %}

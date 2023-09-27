@@ -1,0 +1,531 @@
+{% extends "ProyectoWebApp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<head>
+    <!--Css Personalizado-->
+    <link href="{% static '/ProyectoWebApp1/css/soluciones/soluciones.css' %}" rel="stylesheet">
+    <!--Bootstrap-->  
+    <link rel="stylesheet" href="{% static '/ProyectoWebApp1/vendor/bootstrap/css/bootstrap.min.css' %}"/>
+
+    <!-- Chart js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- librería de Google charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+
+     <!-- Agrega los enlaces a los archivos CSS y JS necesarios -->
+     <script src="{% static '/ProyectoWebApp1/js/lib/plotly-2.20.0.min.js' %}"></script>
+
+</head>
+
+<body>
+    <!--Sección de datos-->
+    <section>
+        <!--Contenedor principal-->
+        <div class="container mb-3">
+            <!--Fila1(selección)-->
+            <div class="row">
+                <!--Selector de municipios-->
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <label for="municipios" style="color: white;">Municipios</label>
+                    <select class="form-control" id="selector">
+                        {% for municipio in municipios %}
+                            <option value="{{municipio}}">{{municipio}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <!--Fila2(grafica Granulometrica)-->
+            <div id="g1" data_set = "{{grafica1}}" data_set2="{{grafica2}}" data_set26="{{grafica25_1}}" data_set27="{{grafica25_2}}" 
+                    data_set3="{{grafica3}}" data_set4="{{grafica4}}" data_set5="{{grafica5}}" data_set6="{{grafica6}}" 
+                    data_set7="{{grafica7}}" data_set8="{{grafica8}}" data_set9="{{grafica9}}" data_set10="{{grafica10}}" 
+                    data_set11="{{grafica11}}" data_set12="{{grafica12}}" data_set13="{{grafica13}}" data_set14="{{grafica14}}" 
+                    data_set15="{{grafica15}}" data_set16="{{grafica16}}" data_set17="{{grafica17}}" data_set18="{{grafica18}}" 
+                    data_set19="{{grafica19}}" data_set20="{{grafica20}}" data_set21="{{grafica21}}" data_set22="{{grafica22}}" 
+                    data_set23="{{grafica23}}" data_set24="{{grafica24}}" data_set25="{{grafica25}}"  class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div>
+                        <h3 class="titulo_graph" id="franjas" style="color: white; text-align: center;">Franjas Granulometricas(Afirmados) vs Granulometría de la Fuente</h3>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="chart1"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Fila3:titulos-->
+            <div class="row">
+                <div>
+                    <h1 class="titulo_graph" id="hd1" style="color: white; text-align: center;">Implementación del Algoritmo de Dijkstra</h1>
+                </div>
+            </div>
+            <!--Fila4:Mapa-dijkstra y ruta corta-->
+            <div class="row">
+                <!--Mapa-dijkstra-->
+                <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+                    <div class="card mt-3"> <!-- Crea un contenedor de una tarjeta (card) y le agrega una margen superior (mt-3) de tamaño mediano. La clase "card" de Bootstrap proporciona una apariencia estilizada y se utiliza para contener otros elementos dentro de ella, como encabezados, imágenes, listas y tablas.-->
+                        <div class="card-header">Algoritmo Dijkstra para visitas técnicas</div> <!--Crea un encabezado (header) para la tarjeta con el texto "Busqueda" dentro del mismo. La clase "card-header" de Bootstrap se utiliza para dar estilo al encabezado de la tarjeta-->
+                        <div class="card-body">
+                            <div id="grafo">
+                                <div>
+                                    <!--<iframe src="{% static 'temp_graph.html' %}" width="100%" height="500px"></iframe>-->
+                                    <iframe src="{% url 'mostrar_grafo' %}" width="100%" height="500px" ruta_corta="{{ruta_mas_corta}}" id="ruta_corta"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Formulario-->
+                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                    <form method="post" action="{% url 'Soluciones' %}">
+                        {% csrf_token %}
+                        <!-- ORIGEN -->
+                        <div>                     
+                            <label for="Fuente de Origen" style="color: white;">Elige el nodo de Oriten</label>
+                            <select class="form-control" id="origen" name="origen">
+                                {% for dato in datos %}
+                                    <option value="{{ dato }}">{{ dato }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- DESTINO -->
+                        <div>
+                            <label for="Fuente de Destino" style="color: white;">Elegie el nodo Final</label>
+                            <select class="form-control" id="destino" name="destino">
+                                {% for dato in datos %}
+                                    <option value="{{ dato }}">{{ dato }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Botón Enviar -->
+                        <div>
+                            <input type="submit" value="Buscar/recargar" class="btn btn-info filter-btn" style="margin-top: 10;"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <br>
+            <!--Respuesta de la ruta mínima-->
+            <div class="row">
+                <!--Resultado del tiempo total de viaje-->
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <label for="ruta_mas_corta" style="color: white;">Tiempo de Viaje</label>
+                    <textarea class="form-control" id="cuadro-texto" rows="3" readonly>El tiempo de Viaje es: {{resultado_horas}} Horas</textarea>
+                </div>
+                <!--Tabla2:Resultado de distancias-->
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <div class="table-container" style="overflow: auto;">
+                        <div class="table-responsive rounded">
+                            <table class="table table-striped" class="table table-striped table-hover rounded" style="background-color: #D1E7DD">
+                                <thead>
+                                <tr>
+                                        <th class="sticky-col">No</th>
+                                        <th>Nodoi-Nodoi+1</th>
+                                        <th>Distancia en Km</th>
+                                        <th>Velocidad en Km/h</th>
+                                        <th>Tiempo en horas</th>
+                                </tr> 
+                                </thead>
+                                <tbody>
+                                    {% for nodo in distancias_tiempo %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ nodo.descripcion }}</td>
+                                        <td>{{ nodo.distancia }}</td>
+                                        <td>{{ nodo.velocidad }}</td> <!-- Aquí puedes definir la velocidad -->
+                                        <td>{{ nodo.tiempo }}</td> <!-- Calcula el tiempo en función de la velocidad -->
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--Link del mapa-->
+                <!-- <a href="/static/ProyectoWebApp1/img/mapa.jpg" onclick="mostrarImagen(event)">
+                        <span style="color: white;">Presiona click para visualizar el mapa</span>
+                        <img id="imagen" src="/static/ProyectoWebApp1/img/mapa.jpg" style="max-width: 100%; height: auto;" alt="Mapa de rutas">
+                </a> -->
+            </div>
+            <!--Link para canteras-Móvil-->
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-10 col-xl-10">
+                    <h6 style="color: white;">Ruta mínima para distancias y tiempo de acarreos de materiales</h6>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.appsheet.com/start/2a9dfdb2-bb65-4d2b-8cc9-d7a780ba16e0#_currentLat=2.270189701367937&_currentLng=-76.57007860000002&_mapType=hybrid&_zoom=8&appName=NewApp-6272824&table=Hoja1&view=Mapa+de+puntos+Canteras+%28previous+database%29">Software para distancias y tiempo de acarreo de materiales</a>
+                    </li>
+                </div>
+            </div>
+            <!--mapa-->
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div class="card mt-3"> <!-- Crea un contenedor de una tarjeta (card) y le agrega una margen superior (mt-3) de tamaño mediano. La clase "card" de Bootstrap proporciona una apariencia estilizada y se utiliza para contener otros elementos dentro de ella, como encabezados, imágenes, listas y tablas.-->
+                        <div class="card-header">Mapa con Fuentes de Extracción a partir de la ruta mínima</div> <!--Crea un encabezado (header) para la tarjeta con el texto "Busqueda" dentro del mismo. La clase "card-header" de Bootstrap se utiliza para dar estilo al encabezado de la tarjeta-->
+                        <div class="card-body">
+                            <div id="map"></div>
+                            <div id="map-mun"></div>
+                                {{mapa|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Granulometría-->
+    <script>
+        //función jQuery se ejecuta cuanto se carga la página para gráfico CBR//
+        //-------grafica1:franjas granulometricas--------------//
+        $(document).ready(function() {
+        var datos = $('#g1').attr('data_set3')
+        datos = JSON.parse(datos) //convertimos a un objto JS//
+        
+        //fijos A-38
+        var datos1=$('#g1').attr('data_set')
+        datos1=JSON.parse(datos1)
+        var datos2=$('#g1').attr('data_set2');
+        datos2=JSON.parse(datos2);
+        //fijos A-25
+        var datos3=$('#g1').attr('data_set26');
+        datos3=JSON.parse(datos3);
+        var datos4=$('#g1').attr('data_set27');
+        datos4=JSON.parse(datos4);
+
+        var ctx = document.getElementById('chart1').getContext('2d');
+        var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: getX(datos),
+          datasets: [{
+            label: 'Granulometría de la fuente',
+            data: datos,
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+          },{
+                label:'A38-Inferior',
+                data:datos2,
+                borderColor:'rgba(75, 192, 192, 1)',
+                borderWidth:1
+          },{
+                label:'A38-Superior',
+                data:datos1,
+                borderColor:'rgba(75, 192, 192, 1)',
+                borderWidth:1
+          },{
+                label:'A25-Inferior',
+                data:datos4,
+                borderColor:'rgba(100, 100, 100, 100)',
+                borderWidth:1
+          },{
+                label:'A25-Superior',
+                data:datos3,
+                borderColor:'rgba(100, 100, 100, 100)',
+                borderWidth:1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+        });
+        //Selector: Opciones que se puede tomar cualquier municipio
+        $('#selector').on('change', function(){
+            var option = $(this).val()
+            var labels = null
+            if(option == 'El Tambo-Magines')
+            {
+            //grafica magines://
+            datos = $('#g1').attr('data_set3')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='El Tambo-Corregimiento cuatro esquinas'){
+            //gráfica chisquio://
+            datos = $('#g1').attr('data_set4')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Morales-Vereda Santa Barbara'){
+            //gráfica morales-santabarbara://
+            datos = $('#g1').attr('data_set5')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Morales-Vereda Santa la Cuchilla'){
+            //gráfica morales-santacuchilla://
+            datos = $('#g1').attr('data_set6')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Totoro-Vereda Sabaleta'){
+            //gráfica Totoro Sabaleta://
+            datos = $('#g1').attr('data_set7')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Totoro-Vereda San Antonio'){
+            //gráfica Totoro San Antonio://
+            datos = $('#g1').attr('data_set8')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Rosas-Vereda las Trincheras'){
+            //gráfica Rosas las Trincheras://
+            datos = $('#g1').attr('data_set9')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Rosas-Vereda Ufugu'){
+            //gráfica Rosas Ufugu://
+            datos = $('#g1').attr('data_set10')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Bolívar-Vereda Capellanía'){
+            //gráfica Bolivar sobre el rio san jorge://
+            datos = $('#g1').attr('data_set11')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Bolívar-Vereda la medina'){
+            //gráfica Bolivar-El colerin://
+            datos = $('#g1').attr('data_set12')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Piendamo-Vereda Once de Noviembre'){
+            //gráfica Piendamo-el agrado://
+            datos = $('#g1').attr('data_set13')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Popayán-Vereda Quintana'){
+            //gráfica Popayan Belencito://
+            datos = $('#g1').attr('data_set14')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Popayán-Vereda el Agrado'){
+            //gráfica Popayan los cerritos://
+            datos = $('#g1').attr('data_set15')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='La Sierra-San Pedro Bajo'){
+            //gráfica La Sierra-san pedro bajo://
+            datos = $('#g1').attr('data_set16')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Sotará-Vereda Hierbas buenas'){
+            //gráfica Sotará Hierbas Buenas://
+            datos = $('#g1').attr('data_set17')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Sotará-Vereda San Roque'){
+            //gráfica Sotará San Roque://
+            datos = $('#g1').attr('data_set18')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Caldono-Vereda la Esmeralda'){
+            //gráfica Caldono Esmeralda://
+            datos = $('#g1').attr('data_set19')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Caldono-Cantera Vereda El Jardin'){
+            //gráfica Caldono el Jardín://
+            datos = $('#g1').attr('data_set20')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Villa Rica-Bocas del Palo ( Vereda Cantarito)'){
+            //gráfica Villa rica Bocas del palo://
+            datos = $('#g1').attr('data_set21')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Villa Rica-Santa Barbara Vereda Cantarito'){
+            //gráfica Villa rica Santa Barbara://
+            datos = $('#g1').attr('data_set22')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='Guachené-Vereda Pilamo'){
+            //gráfica Guachene Pilamo://
+            datos = $('#g1').attr('data_set23')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='La Vega-Corregimiento San Miguel, Vereda Costa Rica'){
+            //gráfica La Vega Costa Rica://
+            datos = $('#g1').attr('data_set24')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            else if(option=='La Vega-Corregimiento Los Uvos, Vereda la Calista'){
+            //gráfica La Vega Calista://
+            datos = $('#g1').attr('data_set25')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            //*--*
+            else{
+            //grafica sin seleccion://
+            datos = $('#g1').attr('data_set3')
+            datos = JSON.parse(datos)
+            labels = getX(datos)
+            myChart.data.datasets[0].data = datos
+            myChart.data.labels = labels
+            myChart.update()
+            }
+            })
+        function getX(data)  {
+            const new_array= data.map((item) => item.x)
+            console.log(new_array)
+            return new_array
+        }
+        });
+    </script>
+    <!--Grafo-->
+    <script>
+        // Recupera la ruta del archivo HTML de la figura del contexto
+        var figPath = "{{ fig_path }}"; 
+        // Crea un elemento iframe para cargar el archivo HTML de la figura
+        var iframe = document.createElement('iframe');
+        iframe.src = figPath;
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.style.border = "none";
+
+         // Obtener la lista de nodos de la ruta mínima desde el contexto
+        var rutaMinima = JSON.parse('{{ ruta_minima|escapejs }}');
+
+        // Resaltar la ruta mínima en el grafo
+        rutaMinima.forEach(function(nodo) {
+            // Aplicar estilos o resaltar el nodo en el grafo
+            // Puedes utilizar D3.js o jQuery para seleccionar y modificar los nodos del grafo
+            // Por ejemplo, puedes agregar una clase CSS para resaltar el nodo
+            graphContent.getElementById(nodo).classList.add('ruta-minima');
+        });
+
+        // Agrega el elemento iframe al div con el id "grafo"
+        var grafoDiv = document.getElementById('grafo');
+        grafoDiv.appendChild(iframe);
+    </script>
+    <!--comportamiento de la imagen-->
+    <script>
+        function mostrarImagen(event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+    
+            var imagen = document.getElementById('imagen');
+            imagen.style.display = 'block';
+            if (imagen.requestFullscreen) {
+            imagen.requestFullscreen();
+                } else if (imagen.mozRequestFullScreen) {
+                    imagen.mozRequestFullScreen();
+                } else if (imagen.webkitRequestFullscreen) {
+                    imagen.webkitRequestFullscreen();
+                } else if (imagen.msRequestFullscreen) {
+                    imagen.msRequestFullscreen();
+                }
+        }
+    </script>
+    <!--CSS PARA OCULTAR LA IMAGEN-->
+    <style>
+        #imagen {
+            display: none; /* Ocultar la imagen inicialmente */
+        }
+    </style>
+    <script src="{% static '/ProyectoWebApp1/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/ProyectoWebApp1/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+{% endblock %}

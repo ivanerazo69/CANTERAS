@@ -1,0 +1,20 @@
+/* reduce el tamaño del texto en los botones */
+
+  /*titulos de gráficos*/
+  .titulo_graph{
+    font-size: 100%;
+    padding: 30px .1em;
+  }
+  
+  /*estilos del gráfico*/
+  .graph{
+    width: 100%;
+    height: 72%;
+    text-align: center;
+    align-items: center;
+  }
+  .ruta-minima {
+    background-color: yellow;
+    border: 2px solid red;
+    /* Otros estilos que desees aplicar */
+  }
